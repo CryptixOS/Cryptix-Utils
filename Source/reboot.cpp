@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: GPL-3
  */
 #include <Prism/Core/Core.hpp>
+#include <Prism/Core/Error.hpp>
+#include <Prism/String/StringView.hpp>
 #include <cryptix/reboot.hpp>
 
 using namespace cryptix;
@@ -17,9 +19,10 @@ using namespace Prism;
 ErrorOr<void> NeonMain(const Vector<StringView>& argv,
                        const Vector<StringView>& envp)
 {
+    IgnoreUnused(argv);
+    IgnoreUnused(envp);
     printf("The system will reboot...\n");
     Syscall(SYS_REBOOT, RebootCmd::eRestart);
-    // reboot(LINUX_REBOOT_CMD_RESTART);
 
     return Error(errno);
 }

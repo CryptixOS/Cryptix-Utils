@@ -4,16 +4,26 @@
  *
  * SPDX-License-Identifier: GPL-3
  */
-#include <stdio.h>
-#include <stdlib.h>
+#include <Prism/Core/Core.hpp>
+#include <Prism/Core/Error.hpp>
+#include <Prism/String/StringView.hpp>
+#include <cryptix/reboot.hpp>
 
+using namespace cryptix;
+using namespace Prism;
+
+#include <cryptix/syscall.h>
 #include <linux/reboot.h>
 #include <sys/reboot.h>
 
-int main()
+ErrorOr<void> NeonMain(const Vector<StringView>& argv,
+                       const Vector<StringView>& envp)
 {
+    IgnoreUnused(argv);
+    IgnoreUnused(envp);
+
     printf("The system will be shutdown...\n");
     reboot(LINUX_REBOOT_CMD_POWER_OFF);
 
-    return EXIT_FAILURE;
+    return {};
 }

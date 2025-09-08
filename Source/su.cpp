@@ -7,11 +7,14 @@
 #define PRISM_LOG_ENABLE true
 
 #include <Prism/Containers/Array.hpp>
+#include <Prism/Containers/Vector.hpp>
+#include <Prism/Core/Error.hpp>
 #include <Prism/Debug/Log.hpp>
 #include <Prism/String/String.hpp>
 #include <Prism/String/StringUtils.hpp>
 #include <Prism/Utility/Optional.hpp>
 #include <Prism/Utility/Path.hpp>
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -26,9 +29,10 @@ void print(StringView str)
     for (usize i = 0; i < str.Size(); i++) putchar(str[i]);
 }
 
-int main(int argc, char** argv, char** envp)
+ErrorOr<void> NeonMain(const Vector<StringView>& argv,
+                       const Vector<StringView>& envp)
 {
-    if (argc <= 1) return EXIT_FAILURE;
+    if (argv.Size() <= 1) return Error(errno);
 
     StringView username = argv[1];
     FILE*      passwd   = fopen("/etc/passwd", "r");
@@ -73,7 +77,7 @@ int main(int argc, char** argv, char** envp)
         }
     }
 
-    if (!uid) return 1;
+    if (!uid) return Error(errno);
 
     printf("found user: %s with uid %u, and gid: %u", username.Raw(),
            uid.Value(), gid.Value());
@@ -103,14 +107,18 @@ int main(int argc, char** argv, char** envp)
     print(shellPath);
     print("\n");
 
+    Vector<const char*> envs;
+    for (const auto& env : envp) envs.PushBack(env.Raw());
+
     int pid = fork();
     if (pid == -1)
     {
         perror("su: fork failed");
-        return EXIT_FAILURE;
+        return Error(errno);
     }
     else if (pid == 0)
-        execve(shellPath.Raw(), const_cast<char* const*>(argvArr.Raw()), envp);
+        execve(shellPath.Raw(), const_cast<char* const*>(argvArr.Raw()),
+               const_cast<char* const*>(envs.Raw()));
 
     int status;
 
@@ -121,5 +129,5 @@ int main(int argc, char** argv, char** envp)
             printf("su: child % died with exit code %d\n", pid,
                    WEXITSTATUS(status));
     }
-    return EXIT_SUCCESS;
+    return {};
 }
