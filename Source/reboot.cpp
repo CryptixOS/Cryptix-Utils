@@ -4,20 +4,22 @@
  *
  * SPDX-License-Identifier: GPL-3
  */
-#include <stdio.h>
-#include <stdlib.h>
-
+#include <Prism/Core/Core.hpp>
 #include <cryptix/reboot.hpp>
+
+using namespace cryptix;
+using namespace Prism;
+
 #include <cryptix/syscall.h>
 #include <linux/reboot.h>
 #include <sys/reboot.h>
 
-using namespace cryptix;
-int main()
+ErrorOr<void> NeonMain(const Vector<StringView>& argv,
+                       const Vector<StringView>& envp)
 {
     printf("The system will reboot...\n");
     Syscall(SYS_REBOOT, RebootCmd::eRestart);
     // reboot(LINUX_REBOOT_CMD_RESTART);
 
-    return EXIT_FAILURE;
+    return Error(errno);
 }
