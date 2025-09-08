@@ -1,0 +1,39 @@
+name: CI Meson
+permissions:
+  contents: write
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build-linux:
+    runs-on: [ubuntu-latest]
+    strategy:
+      fail-fast: false
+      matrix:
+        build-configuration: [debugoptimized, debug, release]
+        architecture: [x86_64, aarch64]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: sudo apt update -y && sudo apt install -y meson ninja-build clang lld llvm git cmake python3 pipx fasm
+          && sudo apt install build-essential qemu-system parted udev bison flex libgmp3-dev libmpc-dev libmpfr-dev
+          && sudo apt install texinfo libisl-dev gperf gettext autopoint libreadline-dev help2man groff zsh xorriso g++-aarch64-linux-gnu libgcc-14-dev-arm64-cross libstdc++-14-dev-arm64-cross g++-x86-64-linux-gnu libgcc-14-dev-amd64-cross libstdc++-14-dev-amd64-cross
+          && pipx install xbstrap 
+      - name: Configure Project
+        run: meson setup build --buildtype=${{ matrix.build-configuration }}
+          && ninja -C build -j5
+      - name: Build Tests
+        run: ninja -C build test
+    
