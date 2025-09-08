@@ -4,7 +4,7 @@
 #*
 #* SPDX-License-Identifier: GPL-3
 #*/
-project('Cryptix-Template', ['c', 'cpp'],
+project('Cryptix-Utils', ['c', 'cpp'],
   version: 'v0.0.1', license: 'GPL-3.0',
   default_options: [
     'optimization=3',
@@ -38,9 +38,6 @@ cxx_args = [
 ]
 add_global_arguments(cxx_args, language: 'cpp')
 
-srcs = files(
-  'Source/main.cpp',
-)
 incs = include_directories(
   'Source',
 )
@@ -60,11 +57,25 @@ deps = [
   dependency('neon'),
 ]
 
-executable(
-  'Cryptix-Template', srcs,
-  include_directories: incs, 
-  link_args: ['-lsupc++', '-lgcc_s'], 
-  dependencies: deps, install: true
-)
+utilities = [
+  'reboot',
+  'shutdown',
+  'su',
+  'udev',
+  # 'vi',
+]
+
+foreach utility : utilities
+  srcs = files(
+    'Source' / utility + '.cpp'
+  )
+
+  executable(
+    utility, srcs,
+    include_directories: incs,
+    link_args: ['-lsupc++', '-lgcc_s'], 
+    dependencies: deps, install: true
+  )
+endforeach
 
 subdir('Tests')
