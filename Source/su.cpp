@@ -109,6 +109,7 @@ ErrorOr<void> NeonMain(const Vector<StringView>& argv,
 
     Vector<const char*> envs;
     for (const auto& env : envp) envs.PushBack(env.Raw());
+    envs.PushBack(nullptr);
 
     int pid = fork();
     if (pid == -1)
