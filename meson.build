@@ -35,6 +35,7 @@ cxx_args = [
   '-DFMT_USE_FLOAT=0',
   '-DFMT_USE_FLOAT128=0',
   '-DFMT_USE_EXCEPTIONS=0',
+  '-DPRISM_DISABLE_FMT=1',
 ]
 add_global_arguments(cxx_args, language: 'cpp')
 
@@ -58,9 +59,13 @@ deps = [
 ]
 
 utilities = [
+  'fb_test',
+  'isatty_test',
+  'pipe_test',
   'reboot',
   'shutdown',
   'su',
+  'pthread_test',
   'udev',
   # 'vi',
 ]
