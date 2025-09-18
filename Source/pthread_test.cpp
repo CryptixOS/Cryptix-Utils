@@ -79,6 +79,5 @@ int main()
     (void)thread2;
     // while (true) nanosleep(&ts, nullptr);
 
-    while (true) __asm__ volatile("pause");
     return EXIT_SUCCESS;
 }

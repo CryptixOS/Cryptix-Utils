@@ -7,12 +7,9 @@
 #include <Prism/Core/Core.hpp>
 #include <Prism/Core/Error.hpp>
 #include <Prism/String/StringView.hpp>
-#include <cryptix/reboot.hpp>
 
-using namespace cryptix;
 using namespace Prism;
 
-#include <cryptix/syscall.h>
 #include <linux/reboot.h>
 #include <sys/reboot.h>
 
