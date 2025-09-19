@@ -61,11 +61,13 @@ deps = [
 utilities = [
   'fb_test',
   'isatty_test',
+  'ncurses_test',
   'pipe_test',
   'reboot',
   'shutdown',
   'su',
   'pthread_test',
+  'test_tty',
   'udev',
   # 'vi',
 ]
@@ -78,7 +80,7 @@ foreach utility : utilities
   executable(
     utility, srcs,
     include_directories: incs,
-    link_args: ['-lsupc++', '-lgcc_s'], 
+    link_args: ['-lsupc++', '-lgcc_s', '-lncurses', '-ltinfo'], 
     dependencies: deps, install: true
   )
 endforeach
